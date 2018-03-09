@@ -12,14 +12,13 @@ const queryType = new GraphQLObjectType({
     users: {
       type: new GraphQLList(userType),
       resolve: async () => {
-        return await User.find().select('name').exec()
-        //     .then(data => {
-        //       console.log('data inside resolve-->', data);
-        //       return data;
-        //     })
-        //     .catch(err => {
-        //       console.log(err);
-        //     });
+        return await User.find().exec()
+             .then(data => {
+               return data;
+             })
+             .catch(err => {
+               console.log('DB Error: ', err);
+             });
       }
     }
   })

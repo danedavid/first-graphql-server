@@ -4,9 +4,14 @@ const {
   GraphQLObjectType
 } = graphql;
 const queryType = require('./queries/user');
+const mutation = require('./mutations');
 
 const userSchema = new GraphQLSchema({
-  query: queryType
+  query: queryType,
+  mutation: new GraphQLObjectType({
+    name: 'Mutation',
+    fields: mutation
+  })
 });
 
 module.exports = userSchema;
