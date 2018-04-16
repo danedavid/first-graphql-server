@@ -1,20 +1,41 @@
 const express = require('express');
-const graphqlHTTP = require('express-graphql');
-const cors = require('cors');
-const createDb = require('./config/mongoose');
-const userSchema = require('./graphql');
-const db = createDb();
+const bodyParser = require('body-parser');
+const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
+const { makeExecutableSchema } = require('graphql-tools');
+
 const app = express();
 const PORT = 5000;
 
-app.use('*', cors());
+const fakeData = [
+  { name: 'John Doe' },
+  { name: 'Dane David' },
+];
 
-app.use('/graphql', cors(), graphqlHTTP({
-  schema: userSchema,
-  rootValue: global,
-  graphiql: true
-}));
+const typeDefs = `
+  type Query {
+    users: [User]
+  }
+  type User {
+    name: String
+  }
+`;
+
+const resolvers = {
+  Query: {
+    users: () => fakeData
+  }
+};
+
+const schema = makeExecutableSchema({
+  typeDefs,
+  resolvers
+});
+
+
+app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
+
+app.use('/graphiql', graphiqlExpress({ endpointURL: '/graphql' }));
 
 app.listen(PORT, () => {
-  console.log(`Hope GraphQL is running at ${PORT}`);
+  console.log(`GraphQL is running at http://localhost:${PORT}/graphiql`);
 });
