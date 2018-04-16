@@ -1,7 +1,10 @@
+const fs = require('fs');
 const express = require('express');
 const bodyParser = require('body-parser');
 const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
 const { makeExecutableSchema } = require('graphql-tools');
+
+const typeDefs = fs.readFileSync('./schema.graphql').toString();
 
 const app = express();
 const PORT = 5000;
@@ -10,15 +13,6 @@ const fakeData = [
   { name: 'John Doe' },
   { name: 'Dane David' },
 ];
-
-const typeDefs = `
-  type Query {
-    users: [User]
-  }
-  type User {
-    name: String
-  }
-`;
 
 const resolvers = {
   Query: {
